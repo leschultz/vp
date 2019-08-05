@@ -37,12 +37,16 @@ except Exception:
 runs = np.arange(runs)
 runs = ['run_'+str(i) for i in runs]
 
+# Directories back to main working directory
+back = (len(save.split('/'))-1)*'../'
+
 for run in runs:
+
     contents = run_creator(
                            template_contents,
                            elements,
-                           traj,
-                           potential,
+                           os.path.join(back, traj),
+                           os.path.join(back, potential),
                            potential_type,
                            timestep,
                            dump_rate,
