@@ -108,6 +108,9 @@ def input_parse(infile):
 
             line = line.strip().split(' ')
 
+            if 'units' in line:
+                units = line[-1]
+
             if 'run' == line[0]:
                 holdsteps.append(int(line[-1]))
 
@@ -119,18 +122,19 @@ def input_parse(infile):
                 line = [i for i in line if i != '']
                 elements = line[4:]
 
-            if 'fraction' in line:
-                line = [i for i in line if i != '']
-                fraction = float(line[-1])
+            if 'mytimestep' in line:
+                timestep = float(line[-1])
 
             if ('temp' in line) and ('fix' in line):
                 line = [i for i in line if i != '']
                 temperatures.append(float(line[5]))
 
     param = {
+             'units': units,
              'holdsteps': holdsteps,
              'dumprate': dumprate,
              'elements': elements,
+             'timestep': timestep,
              'temperatures': temperatures,
              }
 
