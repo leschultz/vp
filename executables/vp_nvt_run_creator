@@ -1,0 +1,39 @@
+#!/bin/bash
+  
+# Programs
+PYTHON="python3"  # Python version installed (3 or above)
+
+# Files
+SCRIPTS_DIR="../scripts/"                 # The directory for scripts
+SAVE="../data/"                           # Directory to save data
+TEMPLATE="../file_templates/vp_steps.in"  # The run input file template
+
+# Simulation variables
+SET='../runs/nvt'                                       # The name for the set of runs
+RUNS=2                                                  # The number of runs to generate
+POTENTIAL="../potentials/AlSm.eam.lammps.fs"            # The potential file
+STYLE="eam/fs"                                          # LAMMPS potential style
+INIT="../initial_trajectories/Al-Sm.lammpstrj"          # The starting trajectory
+ELEMENTS="Al Sm"                                        # Ordered elements in INIT
+TIMESTEP=0.001                                          # The timestep
+DUMP=100                                                # The data dump rate
+HOLDTYPE="nvt"                                          # The type of holds (npt or nvt)
+VOLS="[5154.824908, 4890.271316, 4683.782005]"          # NVT cube length per hold (none if npt)
+
+# The list of (hold, run steps) to simulate
+HOLDS="[(1300, 15000), (800, 1500), (300, 1500)]"
+
+# Generate nvt runs
+${PYTHON} ${SCRIPTS_DIR}vp_run_creator.py\
+	"${SET}"\
+        "${RUNS}"\
+        "${TEMPLATE}"\
+        "${ELEMENTS}"\
+        "${INIT}"\
+        "${POTENTIAL}"\
+        "${STYLE}"\
+        "${TIMESTEP}"\
+        "${DUMP}"\
+        "${HOLDTYPE}"\
+        "${VOLS}"\
+        "${HOLDS}"\

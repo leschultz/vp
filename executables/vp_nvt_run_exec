@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Programs
+PYTHON="python3"           # Python version installed (3 or above)
+MPI="mpirun"               # MPI
+LAMMPS="lmp_mpi"           # LAMMPS program
+THREADS=4                  # The number of threads
+
+# Files
+SCRIPTS_DIR="../scripts/"  # The directory for scripts
+RUN_DIR="../runs/nvt"      # The directory to store runs
+IN_NAME="vp_steps.in"      # The template name of the input file
+
+# Run all created jobs
+${PYTHON} ${SCRIPTS_DIR}run_lammps.py\
+        "${RUN_DIR}"\
+        "${MPI} -n ${THREADS} ${LAMMPS}"\
+        "${IN_NAME}"\
