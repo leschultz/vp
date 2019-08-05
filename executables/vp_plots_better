@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Programs
+PYTHON="python3"              # Python version installed (3 or above)
+
+# Files
+SCRIPTS_DIR="../scripts/"     # The directory for scripts
+DATADIR="../data/"            # Directory containing data
+NAME="concated.txt"           # The name of the final data
+FILES="['XDATCAR.300_fractions_better_grouped.txt', 'XDATCAR.800_fractions_better_grouped.txt', 'XDATCAR.1300_fractions_better_grouped.txt']"
+
+# Plot data
+${PYTHON} ${SCRIPTS_DIR}vp_plotter.py "-d${DATADIR}" "-l${FILES}" "-n${NAME}"

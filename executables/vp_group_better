@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Programs
+PYTHON="python3"              # Python version installed (3 or above)
+
+# Files
+SCRIPTS_DIR="../scripts/"     # The directory for scripts
+PARENT="jianqi_data"          # The parent directory name
+DATADIR="../data/"            # Directory containing data
+EXT="_grouped.txt"            # The ending for output file name
+
+# File contaiining Voronoi polyhedra data
+declare -a arr=("XDATCAR.300_fractions_better.txt" "XDATCAR.800_fractions_better.txt" "XDATCAR.1300_fractions_better.txt")\
+
+# Find population statistics
+for i in "${arr[@]}"
+do
+	${PYTHON} ${SCRIPTS_DIR}vp_group.py "-s${DATADIR}${i}" "-p${PARENT}" "-e${EXT}"
+done
