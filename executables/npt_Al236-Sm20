@@ -3,7 +3,7 @@
 # Programs
 PYTHON="python3"    # Python version installed (3 or above)
 MPI="mpirun"        # MPI
-LAMMPS="lmp_daily"  # LAMMPS program
+LAMMPS="lmp_mpi"    # LAMMPS program
 THREADS=4           # The number of threads
 
 # Files
