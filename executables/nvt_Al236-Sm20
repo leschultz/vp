@@ -13,11 +13,11 @@ IN_NAME="vp_steps.in"                     # The template name of the input file
 TEMPLATE="../file_templates/${IN_NAME}"   # The run input file template
 
 # Simulation variables
-SET='../runs/nvt_Al236-Sm20'                            # The name for the set of runs
+SET='../runs/nvt_Al236-Sm20/'                           # The name for the set of runs
 RUNS=100                                                # The number of runs
 POTENTIAL="../potentials/AlSm.eam.lammps.fs"            # The potential file
 STYLE="eam/fs"                                          # LAMMPS potential style
-INIT="../initial_trajectories/Al236-Sm20.lammpstrj"     # The starting trajectory
+INIT="../initial_trajectories/236-20.lammpstrj"         # The starting trajectory
 ELEMENTS="Al Sm"                                        # Ordered elements in INIT
 TIMESTEP=0.001                                          # The timestep
 DUMP=100                                                # The data dump rate

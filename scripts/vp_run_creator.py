@@ -38,7 +38,7 @@ runs = np.arange(runs)
 runs = ['run_'+str(i) for i in runs]
 
 # Directories back to main working directory
-back = (len(save.split('/'))-1)*'../'
+back = (len(os.path.split(save)[0].split('/'))-1)*'../'
 
 for run in runs:
 
