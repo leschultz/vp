@@ -11,15 +11,22 @@ EDGES="5"         # The Voronoi polyhedra edge index
 FACES="10"        # The Voronoi polyhedra minimum number of faces
 
 # Save name and location
-SAVEGROUP="../runs/analysis/fractions_n${EDGES}_geq_${FACES}_grouped.txt"
+SAVE="../runs/analysis/fractions_n${EDGES}_geq_${FACES}.txt"              # Individual
+SAVEGROUP="../runs/analysis/fractions_n${EDGES}_geq_${FACES}_grouped.txt" # Grouped
 
 # Save location for plots
 PLOTSDIR="../runs/plots/"
 
-# Gather statistical data
-${PYTHON} ${SCRIPTS_DIR}vp_plotter.py\
+# Plot individual relations
+${PYTHON} ${SCRIPTS_DIR}vp_individual_plotter.py\
+        "-n${SAVE}"\
+        "-e${EDGES}"\
+        "-f${FACES}"\
+        "-p${PLOTSDIR}"\
+
+# Plot group relations
+${PYTHON} ${SCRIPTS_DIR}vp_group_plotter.py\
         "-n${SAVEGROUP}"\
 	"-e${EDGES}"\
 	"-f${FACES}"\
 	"-p${PLOTSDIR}"\
-
