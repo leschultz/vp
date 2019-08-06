@@ -23,6 +23,11 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+# Create a folder for analysis data
+datadir = os.path.join(*args.n.split('/')[:-1])
+if not os.path.exists(datadir):
+    os.makedirs(datadir)
+
 df = pd.read_csv(args.s)
 
 # Remove last directory to group for run set

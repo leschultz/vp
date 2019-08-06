@@ -17,8 +17,8 @@ FACES="10"        # The Voronoi polyhedra minimum number of faces
 THRESHOLD="0.0"   # The minimum edge length for a Voronoi polyhedra
 
 # Save name and location
-SAVE="../runs/analysis/fractions_n${EDGES}_geq_${FACES}.txt"
-SAVEGROUP="../runs/analysis/fractions_n${EDGES}_geq_${FACES}_grouped.txt"
+SAVE="../runs/analysis/fractions_n${EDGES}_geq_${FACES}/fractions.txt"
+SAVEGROUP="../runs/analysis/fractions_n${EDGES}_geq_${FACES}/fractions_grouped.txt"
 
 # Calculate Vornoi polyhedra fractions
 ${PYTHON} ${SCRIPTS_DIR}vp_individual.py\
