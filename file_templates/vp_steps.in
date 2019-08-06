@@ -47,13 +47,13 @@ pair_coeff                                  * * ${potential} #replace_elements#
 ################################################################################
 
 # Computed values by LAMMPS
-compute                                     mytemp      all   temp
-compute                                     mypress     all   pressure thermo_temp
-compute                                     PE          all   pe
-compute                                     KE          all   ke
+compute                                     Temperature  all   temp
+compute                                     Pressure     all   pressure thermo_temp
+compute                                     PE           all   pe
+compute                                     KE           all   ke
 
 # Computed variables
-variable                                    myvol       equal vol
+variable                                    Volume       equal vol
 
 ################################################################################
 
@@ -63,19 +63,24 @@ timestep                                    ${mytimestep}
 ################################################################################
 
 # Save atom positions at an interval
-dump                                        my_dump_rate all custom ${mydumprate} ${data_file_dump_rate} id type xu yu zu
-dump_modify                                 my_dump_rate sort id
+dump                  my_dump_rate all custom &
+		      ${mydumprate} ${data_file_dump_rate} &
+                      id type xu yu zu
+
+dump_modify           my_dump_rate sort id
 
 ################################################################################
 
 # Open save data
-fix                                         data_saving all ave/time 1 1 ${mydumprate} c_mytemp c_mypress v_myvol c_PE c_KE file ${data_file_characteristics}
+fix                   data_saving all ave/time 1 1 &
+                      ${mydumprate} c_Temperature c_Pressure v_Volume c_PE c_KE &
+                      file ${data_file_characteristics}
 
 # Start of run
 #replace_holds#
 
 # Close save data
-unfix                                       data_saving
+unfix                data_saving
 
 ################################################################################
 

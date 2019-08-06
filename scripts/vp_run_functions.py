@@ -160,6 +160,7 @@ def system_parse(sysfile):
             if '#' in line:
                 values = line.strip().split(' ')
                 columns = values[1:]
+                columns = list(map(lambda x: x.split('_')[-1], columns))
 
             else:
                 values = line.strip().split(' ')
@@ -167,3 +168,26 @@ def system_parse(sysfile):
                 data.append(values)
 
     return columns, data
+
+
+def units(style):
+    '''
+    Define the units by the style used in LAMMPS.
+
+    inputs:
+        style = The units style used in LAMMMPS
+    outputs:
+        x = A dictionary containing the units.
+    '''
+
+    if style == 'metal':
+        x = {
+             'Volume': r'$\AA^{3}$',
+             'Time': r'$ps$',
+             'PE': r'$eV$',
+             'KE': r'$eV$',
+             'Temperature': r'$K$',
+             'Pressure': r'$bars$',
+             }
+
+    return x

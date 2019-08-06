@@ -69,7 +69,6 @@ for i, j in groups:
                 label='SEM'
                 )
 
-
     ax.legend()
     ax.grid()
 

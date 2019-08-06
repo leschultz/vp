@@ -29,6 +29,9 @@ for path in runs:
 
     param = input_parse(os.path.join(path, runin))
 
+    # The units used for the simulation
+    units_metal = units('metal')
+
     # Gather thermodynamic data
     cols, df = system_parse(os.path.join(path, 'system.txt'))
     df = pd.DataFrame(df, columns=cols)
@@ -38,6 +41,11 @@ for path in runs:
     plotdir = os.path.join(*[path, 'plots', 'thermodynamic'])
     if not os.path.exists(plotdir):
         os.makedirs(plotdir)
+
+    # Create a folder for analysis data
+    datadir = os.path.join(*[path, 'data', 'thermodynamic'])
+    if not os.path.exists(datadir):
+        os.makedirs(datadir)
 
     # Start plotting thermodynamic data vs time
     x = df['Time'].values
@@ -49,19 +57,17 @@ for path in runs:
 
         y = df[col].values
 
-        splitcol = col.split('_')[-1]
-
         fig, ax = pl.subplots()
 
         ax.plot(x, y, marker='.', linestyle='none')
 
         ax.grid()
 
-        ax.set_ylabel(splitcol+' in '+param['units']+' units')
+        ax.set_ylabel(col+' ['+units_metal[col]+']')
         ax.set_xlabel('Time [ps]')
 
         fig.tight_layout()
-        pl.savefig(os.path.join(plotdir, splitcol))
+        pl.savefig(os.path.join(plotdir, col))
         pl.close('all')
 
     # Divide data by steps and get settled volume
@@ -69,12 +75,17 @@ for path in runs:
     vols = []
     for step in np.cumsum(param['holdsteps']):
         d = df[(df['TimeStep'] >= prev) & (df['TimeStep'] <= step)]
-        vol = d['v_myvol'].values
+        vol = d['Volume'].values
         vols.append(np.mean(vol[abs(vol-np.mean(vol)) < sigma*np.std(vol)]))
 
-        prev = step
+        prev = step  # To devine the beggining of the next step
 
     holdtemps = param['temperatures']
+
+    # Mean volumes for settled data
+    dfvol = pd.DataFrame({'Temperature': holdtemps, 'Volume': vols})
+    dfvol.to_csv(os.path.join(datadir, 'mean_volumes'), index=False)
+
     fit = stats.linregress(holdtemps, vols)
     m, b, r = fit[:3]
 
@@ -89,8 +100,8 @@ for path in runs:
     ax.grid()
     ax.legend()
 
-    ax.set_ylabel(r'Volume $[A^{3}]$')
-    ax.set_xlabel(r'Temperature $[K]$')
+    ax.set_ylabel(r'Volume ['+units_metal['Volume']+']')
+    ax.set_xlabel(r'Temperature ['+units_metal['Temperature']+']')
 
     fig.tight_layout()
     pl.savefig(os.path.join(plotdir, 'volume_temperature_fit'))
