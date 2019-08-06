@@ -50,10 +50,30 @@ df = df.sort_values(by='number')  # Order by run number
 groupcols = ['group', 'temperature']
 groups = df.groupby(groupcols)
 
-# Create folder for plots
-plotpath = os.path.join(args.p, 'fraction_vs_count')
-if not os.path.exists(plotpath):
-    os.makedirs(plotpath)
+# Create folders for plots
+meanpath = os.path.join(
+                        args.p,
+                        'fraction_vs_count_e'+str(args.e)+'_geq_f'+str(args.f)
+                        )
+
+if not os.path.exists(meanpath):
+    os.makedirs(meanpath)
+
+stdpath = os.path.join(
+                       args.p,
+                       'std_vs_count_e'+str(args.e)+'_geq_f'+str(args.f)
+                       )
+
+if not os.path.exists(stdpath):
+    os.makedirs(stdpath)
+
+sempath = os.path.join(
+                       args.p,
+                       'sem_vs_count_e'+str(args.e)+'_geq_f'+str(args.f)
+                       )
+
+if not os.path.exists(sempath):
+    os.makedirs(sempath)
 
 for group, data in groups:
 
@@ -74,6 +94,7 @@ for group, data in groups:
         frac_sem.append(sem)
         frac_count.append(count)
 
+    # Plot mean vs the number of runs
     fig, ax = pl.subplots()
 
     groupstr = str(group)
@@ -109,7 +130,65 @@ for group, data in groups:
 
     savename = list(map(lambda x: str(x), list(group)))
     savename = '_'.join(savename)
-    savename = os.path.join(plotpath, savename)
+    savename = os.path.join(meanpath, savename)
+    savename += '.png'
+
+    fig.savefig(savename)
+    pl.close('all')
+
+    # Plot std vs the number of runs
+    fig, ax = pl.subplots()
+
+    ax.plot(
+            frac_count,
+            frac_std,
+            marker='.',
+            linestyle='none',
+            label='STDEV: '+groupstr
+            )
+
+    ax.legend()
+    ax.grid()
+
+    ylabel = r'STDEV of VP $(n_{'+str(args.e)+r'}\geq'+str(args.f)+r')$'
+    ax.set_xlabel('Number of Runs')
+    ax.set_ylabel(ylabel)
+    ax.set_xticks(frac_count)
+
+    fig.tight_layout()
+
+    savename = list(map(lambda x: str(x), list(group)))
+    savename = '_'.join(savename)
+    savename = os.path.join(stdpath, savename)
+    savename += '.png'
+
+    fig.savefig(savename)
+    pl.close('all')
+
+    # Plot sem vs the number of runs
+    fig, ax = pl.subplots()
+
+    ax.plot(
+            frac_count,
+            frac_sem,
+            marker='.',
+            linestyle='none',
+            label='SEM: '+groupstr
+            )
+
+    ax.legend()
+    ax.grid()
+
+    ylabel = r'STDEV of VP $(n_{'+str(args.e)+r'}\geq'+str(args.f)+r')$'
+    ax.set_xlabel('Number of Runs')
+    ax.set_ylabel(ylabel)
+    ax.set_xticks(frac_count)
+
+    fig.tight_layout()
+
+    savename = list(map(lambda x: str(x), list(group)))
+    savename = '_'.join(savename)
+    savename = os.path.join(sempath, savename)
     savename += '.png'
 
     fig.savefig(savename)

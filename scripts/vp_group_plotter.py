@@ -45,7 +45,11 @@ groupcols = ['run', 'temperature']
 groups = df.groupby(groupcols)
 
 # Create folder for plots
-plotpath = os.path.join(args.p, 'fraction_vs_atoms')
+plotpath = os.path.join(
+                        args.p,
+                        'fraction_vs_atoms_e'+str(args.e)+'_geq_f'+str(args.f)
+                        )
+
 if not os.path.exists(plotpath):
     os.makedirs(plotpath)
 
