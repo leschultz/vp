@@ -22,13 +22,15 @@ ELEMENTS="Al Sm"                                        # Ordered elements in IN
 TIMESTEP=0.001                                          # The timestep
 DUMP=100                                                # The data dump rate
 HOLDTYPE="nvt"                                          # The type of holds (npt or nvt)
-VOLS="[5154.824908, 4890.271316, 4683.782005]"          # NVT cube length per hold (none if npt)
+
+# NVT cube volumes per hold (none if npt)
+VOLS="[5215.2464828303855, 4949.398984455958, 4778.643694530444]"
 
 # Analysis variables
 SIGMA=2
 
 # The list of (hold, run steps) to simulate
-HOLDS="[(1300, 100000), (800, 100000), (300, 100000)]"
+HOLDS="[(1300, 15000), (800, 15000), (300, 15000)]"
 
 # Generate nvt runs
 ${PYTHON} ${SCRIPTS_DIR}vp_run_creator.py\
