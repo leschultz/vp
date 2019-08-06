@@ -5,6 +5,7 @@ Functions for Voronoi polyhedra (VP) analysis
 from PyQt5 import QtGui  # Added to be able to import ovito
 
 from ovito.modifiers import VoronoiAnalysisModifier
+from ovito.modifiers import SelectExpressionModifier
 from ovito.io import import_file
 
 from shutil import copyfile
@@ -115,6 +116,14 @@ def vp_iterator(inputname, trajname, sysname, data, parent, *args, **kwaargs):
                                   })
 
         fractions['run'] = path.split(parent)[-1]  # The name of run
+
+        # Compute the number of atoms
+        node = import_file(traj)
+        select = SelectExpressionModifier(expression='ParticleType')
+        node.modifiers.append(select)
+        node.compute()
+        atoms = node.output.attributes['SelectExpression.num_selected']
+        fractions['atoms'] = atoms
 
         df.append(fractions)
 
