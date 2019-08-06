@@ -10,16 +10,20 @@ from ovito.io import import_file
 from shutil import copyfile
 from os.path import join
 
+from vp_run_functions import system_parse, input_parse
+from functions import finder
+
 import pandas as pd
 import numpy as np
 
 
-def vp(traj, edges, faces, threshold):
+def vp(traj, frames, edges, faces, threshold):
     '''
     Count the fraction of Voronoi polyhedra (VP) meeting criteria.
 
     inputs:
         traj = The trajectory files
+        frames = A list of frames to analyize
         edges = The VP edge considered
         faces = The minimum number of faces for considered edge
         threshold = The minimum length for VP edge
@@ -43,7 +47,7 @@ def vp(traj, edges, faces, threshold):
     node.modifiers.append(voro)
 
     all_indexes = []
-    for frame in range(node.source.num_frames+1):
+    for frame in frames:
         out = node.compute(frame)
         indexes = out.particle_properties['Voronoi Index'].array
         all_indexes.append(indexes)
@@ -61,33 +65,61 @@ def vp(traj, edges, faces, threshold):
     return fraction
 
 
-def vp_iterator(name, data, *args, **kwaargs):
+def vp_iterator(inputname, trajname, sysname, data, parent, *args, **kwaargs):
     '''
     Conduct Voronoi polyhedra (VP) analysis for all matching files.
 
     inputs:
-        name = The trajectory file name
-        data = The parent directory of all data
+        inputname = The input file name
+        trajname = The trajectory file name
+        sysname = The thermodynamic data file name
+        data = The location to the parent directory of all data
+        parent = The top directory name of the parent directory
     outputs:
     '''
 
     # Count all mathching paths
-    paths = finder(name, data)
+    paths = finder(trajname, data)
     count = str(len(paths))
 
     newcount = 1
     df = []
     for path in paths:
 
-        run = join(path, name)
-        print('Voronoi polyhedra '+'('+str(newcount)+'/'+count+'): '+run)
+        inp = join(path, inputname)
+        traj = join(path, trajname)
+        sys = join(path, sysname)
 
-        fraction = vp(run, **kwaargs)
-        df.append(fraction)
+        print('Voronoi polyhedra '+'('+str(newcount)+'/'+count+'): '+path)
+
+        param = input_parse(inp)  # Input parameters
+
+        # Thermodynamic data
+        cols, thermo = system_parse(sys)
+        thermo = pd.DataFrame(thermo, columns=cols)
+        thermo['Time'] = thermo['TimeStep']*param['timestep']
+        thermo['frames'] = thermo.index+1  # The simulation frames
+
+        prev = 0
+        fractions = []
+        for step in np.cumsum(param['holdsteps']):
+            cond = (thermo['TimeStep'] >= prev) & (thermo['TimeStep'] <= step)
+            d = thermo[cond]
+            fractions.append(vp(traj, d['frames'].values, **kwaargs))
+
+            prev = step
+
+        fractions = pd.DataFrame({
+                                  'temperature': param['temperatures'],
+                                  'fraction': fractions
+                                  })
+
+        fractions['run'] = path.split(parent)[-1]  # The name of run
+
+        df.append(fractions)
 
         newcount += 1
 
-    df = {'run': paths, 'fraction': df}
-    df = pd.DataFrame(df)
+    df = pd.concat(df)
 
     return df

@@ -1,16 +1,20 @@
 #!/bin/bash
   
 # Programs
-PYTHON="python3"  # Python version installed (3 or above)
+PYTHON="python3"    # Python version installed (3 or above)
+MPI="mpirun"        # MPI
+LAMMPS="lmp_daily"  # LAMMPS program
+THREADS=4           # The number of threads
 
 # Files
 SCRIPTS_DIR="../scripts/"                 # The directory for scripts
 SAVE="../data/"                           # Directory to save data
-TEMPLATE="../file_templates/vp_steps.in"  # The run input file template
+IN_NAME="vp_steps.in"                     # The template name of the input file
+TEMPLATE="../file_templates/${IN_NAME}"   # The run input file template
 
 # Simulation variables
 SET='../runs/nvt'                                       # The name for the set of runs
-RUNS=2                                                  # The number of runs to generate
+RUNS=2                                                  # The number of runs
 POTENTIAL="../potentials/AlSm.eam.lammps.fs"            # The potential file
 STYLE="eam/fs"                                          # LAMMPS potential style
 INIT="../initial_trajectories/Al-Sm.lammpstrj"          # The starting trajectory
@@ -20,8 +24,11 @@ DUMP=100                                                # The data dump rate
 HOLDTYPE="nvt"                                          # The type of holds (npt or nvt)
 VOLS="[5154.824908, 4890.271316, 4683.782005]"          # NVT cube length per hold (none if npt)
 
+# Analysis variables
+SIGMA=2
+
 # The list of (hold, run steps) to simulate
-HOLDS="[(1300, 15000), (800, 1500), (300, 1500)]"
+HOLDS="[(1300, 1000), (800, 1000), (300, 1000)]"
 
 # Generate nvt runs
 ${PYTHON} ${SCRIPTS_DIR}vp_run_creator.py\
@@ -37,3 +44,15 @@ ${PYTHON} ${SCRIPTS_DIR}vp_run_creator.py\
         "${HOLDTYPE}"\
         "${VOLS}"\
         "${HOLDS}"\
+
+# Run all created jobs
+${PYTHON} ${SCRIPTS_DIR}run_lammps.py\
+        "${SET}"\
+        "${MPI} -n ${THREADS} ${LAMMPS}"\
+        "${IN_NAME}"\
+
+${PYTHON} ${SCRIPTS_DIR}thermo_plotter.py\
+	"${SET}"\
+	"${IN_NAME}"\
+	"${SIGMA}"\
+	"False"\

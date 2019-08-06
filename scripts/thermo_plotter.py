@@ -17,6 +17,13 @@ import os
 runsdir = sys.argv[1]  # The path to the run set
 runin = sys.argv[2]  # The name for the input file
 sigma = float(sys.argv[3])  # The confidence interval for statistical tests
+volplot = sys.argv[4]  # Wheter or not to plot volume means
+
+# Convert string to boolean
+if volplot == 'True':
+    volplot = True
+else:
+    volplot = False
 
 # Count all mathching paths
 runs = finder('system.txt', runsdir)
@@ -35,17 +42,12 @@ for path in runs:
     # Gather thermodynamic data
     cols, df = system_parse(os.path.join(path, 'system.txt'))
     df = pd.DataFrame(df, columns=cols)
-    df['Time'] = df['TimeStep']*param['timestep']  # Time in [ps]
+    df['Time'] = df['TimeStep']*param['timestep']
 
     # Create folder for plots thermodynamic data
     plotdir = os.path.join(*[path, 'plots', 'thermodynamic'])
     if not os.path.exists(plotdir):
         os.makedirs(plotdir)
-
-    # Create a folder for analysis data
-    datadir = os.path.join(*[path, 'data', 'thermodynamic'])
-    if not os.path.exists(datadir):
-        os.makedirs(datadir)
 
     # Start plotting thermodynamic data vs time
     x = df['Time'].values
@@ -69,6 +71,17 @@ for path in runs:
         fig.tight_layout()
         pl.savefig(os.path.join(plotdir, col))
         pl.close('all')
+
+    newcount += 1
+
+    # Skip plotting volume means vs hold temperatures
+    if volplot is False:
+        continue
+
+    # Create a folder for analysis data
+    datadir = os.path.join(*[path, 'data', 'thermodynamic'])
+    if not os.path.exists(datadir):
+        os.makedirs(datadir)
 
     # Divide data by steps and get settled volume
     prev = 0  # All steps should start at 0
@@ -106,5 +119,3 @@ for path in runs:
     fig.tight_layout()
     pl.savefig(os.path.join(plotdir, 'volume_temperature_fit'))
     pl.close('all')
-
-    newcount += 1

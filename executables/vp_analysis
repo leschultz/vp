@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Programs
+PYTHON="python3"              # Python version installed (3 or above)
+
+# Files and directories
+SCRIPTS_DIR="../scripts/"     # The directory for scripts
+DATA="../runs/nvt/"           # Directory were data is stored
+INPUT="vp_steps.in"           # The LAMMPS input file
+TRAJ="traj.lammpstrj"         # File containing trajectories
+THERMO="system.txt"           # File containing thermodynamic data
+PARENT="runs"                 # The name of the parent directory
+
+# Analysis variables
+EDGES="5"         # The Voronoi polyhedra edge index
+FACES="10"        # The Voronoi polyhedra minimum number of faces
+THRESHOLD="0.0"   # The minimum edge length for a Voronoi polyhedra
+
+# Save name and location
+SAVE="../runs/analysis/nvt_fractions_n${EDGES}_geq_${FACES}.txt"
+SAVEGROUP="../runs/analysis/nvt_fractions_n${EDGES}_geq_${FACES}_grouped.txt"
+
+# Calculate Vornoi polyhedra fractions
+${PYTHON} ${SCRIPTS_DIR}vp_individual.py\
+	"-i${INPUT}"\
+	"-n${TRAJ}"\
+        "-t${THERMO}"\
+       	"-d${DATA}"\
+	"-p${PARENT}"\
+       	"-e${EDGES}"\
+       	"-f${FACES}"\
+	"-o${THRESHOLD}"\
+       	"-s${SAVE}"\
+
+# Gather statistical data
+${PYTHON} ${SCRIPTS_DIR}vp_group.py\
+	"-s${SAVE}"\
+	"-n${SAVEGROUP}"\

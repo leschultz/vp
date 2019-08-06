@@ -1,10 +1,10 @@
 #!/bin/bash
   
 # Programs
-PYTHON="python3"  # Python version installed (3 or above)
-MPI="mpirun"      # MPI
-LAMMPS="lmp_mpi"  # LAMMPS program
-THREADS=4         # The number of threads
+PYTHON="python3"    # Python version installed (3 or above)
+MPI="mpirun"        # MPI
+LAMMPS="lmp_daily"  # LAMMPS program
+THREADS=4           # The number of threads
 
 # Files
 SCRIPTS_DIR="../scripts/"                 # The directory for scripts
@@ -30,8 +30,6 @@ SIGMA=2
 # The list of (hold, run steps) to simulate
 HOLDS="[(1300, 1000), (800, 1000), (300, 1000)]"
 
-: <<'END'
-
 # Generate nvt runs
 ${PYTHON} ${SCRIPTS_DIR}vp_run_creator.py\
 	"${SET}"\
@@ -53,9 +51,8 @@ ${PYTHON} ${SCRIPTS_DIR}run_lammps.py\
         "${MPI} -n ${THREADS} ${LAMMPS}"\
         "${IN_NAME}"\
 
-END
-
 ${PYTHON} ${SCRIPTS_DIR}thermo_plotter.py\
 	"${SET}"\
 	"${IN_NAME}"\
 	"${SIGMA}"\
+	"True"\
