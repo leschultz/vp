@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Programs
+PYTHON="python3"              # Python version installed (3 or above)
+
+# Files and directories
+SCRIPTS_DIR="../scripts/"     # The directory for scripts
+
+# Analysis variables
+EDGES="5"         # The Voronoi polyhedra edge index
+FACES="8"         # The Voronoi polyhedra minimum number of faces
+
+# Save name and location
+SAVE="../runs/nvt/analysis/fractions_n${EDGES}_geq_f${FACES}/fractions.txt"
+SAVEGROUP="../runs/nvt/analysis/fractions_n${EDGES}_geq_f${FACES}/fractions_grouped.txt"
+
+# Save location for plots
+PLOTSDIR="../runs/nvt/plots/"
+
+# Plot individual relations
+${PYTHON} ${SCRIPTS_DIR}vp_individual_plotter.py\
+        "-n${SAVE}"\
+        "-e${EDGES}"\
+        "-f${FACES}"\
+        "-p${PLOTSDIR}"\
+
+# Plot group relations
+${PYTHON} ${SCRIPTS_DIR}vp_group_plotter.py\
+        "-n${SAVEGROUP}"\
+	"-e${EDGES}"\
+	"-f${FACES}"\
+	"-p${PLOTSDIR}"\
