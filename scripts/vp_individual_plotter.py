@@ -103,6 +103,10 @@ for group, data in groups:
         frac_sem_percent.append(sem_percent)
         frac_count.append(count)
 
+    # If the number of runs is less than two skip
+    if not frac_mean:
+        continue
+
     # Plot mean vs the number of runs
     fig, ax = pl.subplots()
 
@@ -133,7 +137,6 @@ for group, data in groups:
     ylabel = r'Fraction of VP $(n_{'+str(args.e)+r'}\geq'+str(args.f)+r')$'
     ax.set_xlabel('Number of Runs')
     ax.set_ylabel(ylabel)
-    ax.set_xticks(frac_count)
 
     fig.tight_layout()
 
@@ -150,7 +153,6 @@ for group, data in groups:
 
     # Plot std vs the number of runs
     fig, ax1 = pl.subplots()
-    ax2 = ax1.twinx()
 
     ax1.plot(
              frac_count,
@@ -164,10 +166,11 @@ for group, data in groups:
     ax1.grid()
 
     ax1.set_xlabel('Number of Runs')
-    ax1.set_xticks(frac_count)
 
     ylabel = r'STDEV'+ygeneral
     ax1.set_ylabel(ylabel)
+
+    ax2 = ax1.twinx()
     ax2.set_ylabel(r'$\%$ '+ylabel)
     ax2.set_ylim(min(frac_std_percent), max(frac_std_percent))
 
@@ -183,7 +186,6 @@ for group, data in groups:
 
     # Plot sem vs the number of runs
     fig, ax1 = pl.subplots()
-    ax2 = ax1.twinx()
 
     ax1.plot(
              frac_count,
@@ -197,11 +199,12 @@ for group, data in groups:
     ax1.grid()
 
     ax1.set_xlabel('Number of Runs')
-    ax1.set_xticks(frac_count)
 
     ylabel = r'SEM'+ygeneral
 
     ax1.set_ylabel(ylabel)
+
+    ax2 = ax1.twinx()
     ax2.set_ylabel(r'$\%$ '+ylabel)
     ax2.set_ylim(min(frac_sem_percent), max(frac_sem_percent))
 

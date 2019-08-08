@@ -33,7 +33,7 @@ df = pd.read_csv(args.s)
 # Remove last directory to group for run set
 df['run'] = df['run'].apply(lambda x: os.path.join(*x.split('/')[:-1]))
 
-groupcols = ['run', 'temperature', 'atoms']
+groupcols = ['run', 'temperature', 'atoms', 'composition', 'system']
 groups = df.groupby(groupcols)
 
 # Compute population statistics

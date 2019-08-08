@@ -121,9 +121,26 @@ def vp_iterator(inputname, trajname, sysname, data, parent, *args, **kwaargs):
         node = import_file(traj)
         select = SelectExpressionModifier(expression='ParticleType')
         node.modifiers.append(select)
+
         node.compute()
         atoms = node.output.attributes['SelectExpression.num_selected']
         fractions['atoms'] = atoms
+
+        # Count all the types of atoms
+        counts = []
+        for i in range(1, len(param['elements'])+1):
+            expression = 'ParticleType=='+str(i)
+            node = import_file(traj)
+            select = SelectExpressionModifier(expression=expression)
+            node.modifiers.append(select)
+            node.compute()
+            num = node.output.attributes['SelectExpression.num_selected']
+            counts.append(num)
+
+        composition = [i+str(j) for i, j in zip(param['elements'], counts)]
+        composition = ''.join(composition)
+        fractions['composition'] = composition
+        fractions['system'] = ''.join(param['elements'])
 
         df.append(fractions)
 

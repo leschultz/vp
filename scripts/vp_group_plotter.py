@@ -41,7 +41,7 @@ args = parser.parse_args()
 
 df = pd.read_csv(args.n)
 
-groupcols = ['run', 'temperature']
+groupcols = ['system', 'temperature']
 groups = df.groupby(groupcols)
 
 # Create folder for plots
