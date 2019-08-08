@@ -13,7 +13,7 @@ IN_NAME="vp_steps.in"                     # The template name of the input file
 TEMPLATE="../file_templates/${IN_NAME}"   # The run input file template
 
 # Simulation variables
-SET='../runs/npt_Al6372-Sm540/'                         # The name for the set of runs
+SET='../runs/npt/npt_Al6372-Sm540/'                     # The name for the set of runs
 RUNS=1                                                  # The number of runs
 POTENTIAL="../potentials/AlSm.eam.lammps.fs"            # The potential file
 STYLE="eam/fs"                                          # LAMMPS potential style
