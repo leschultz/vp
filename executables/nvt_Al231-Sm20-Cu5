@@ -24,7 +24,7 @@ DUMP=100                                                # The data dump rate
 HOLDTYPE="nvt"                                          # The type of holds (npt or nvt)
 
 # NVT cube volumes per hold (none if npt)
-VOLS="[]"
+VOLS="[5168.831092611862, 4836.968910585817, 4615.802749742533]"
 
 # Analysis variables
 SIGMA=2
