@@ -42,12 +42,7 @@ args = parser.parse_args()
 
 df = pd.read_csv(args.n)
 
-# Grab the run number
-df['number'] = df['run'].apply(lambda x: int(x.split('/')[-1].split('_')[-1]))
-df['group'] = df['run'].apply(lambda x: x.split('/')[1])
-df = df.sort_values(by='number')  # Order by run number
-
-groupcols = ['group', 'temperature']
+groupcols = ['composition', 'temperature']
 groups = df.groupby(groupcols)
 
 # Create folders for plots
