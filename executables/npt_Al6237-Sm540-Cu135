@@ -1,0 +1,58 @@
+#!/bin/bash
+  
+# Programs
+PYTHON="python3"    # Python version installed (3 or above)
+MPI="mpirun"        # MPI
+LAMMPS="lmp_mpi"    # LAMMPS program
+THREADS=4           # The number of threads
+
+# Files
+SCRIPTS_DIR="../scripts/"                 # The directory for scripts
+SAVE="../data/"                           # Directory to save data
+IN_NAME="vp_steps.in"                     # The template name of the input file
+TEMPLATE="../file_templates/${IN_NAME}"   # The run input file template
+
+# Simulation variables
+SET='../runs/npt/npt_Al6237-Sm540-Cu135/'               # The name for the set of runs
+RUNS=1                                                  # The number of runs
+POTENTIAL="../potentials/AlSmCu.lammps.eam"             # The potential file
+STYLE="eam/alloy"                                       # LAMMPS potential style
+INIT="../initial_trajectories/6237-540-135.lammpstrj"   # The starting trajectory
+ELEMENTS="Al Sm Cu"                                     # Ordered elements in INIT
+TIMESTEP=0.001                                          # The timestep
+DUMP=100                                                # The data dump rate
+HOLDTYPE="npt"                                          # The type of holds (npt or nvt)
+VOLS="none"                                             # NVT cube length per hold (none if npt)
+
+# Analysis variables
+SIGMA=2
+
+# The list of (hold, run steps) to simulate
+HOLDS="[(1300, 100000), (800, 100000), (300, 100000)]"
+
+# Generate nvt runs
+${PYTHON} ${SCRIPTS_DIR}vp_run_creator.py\
+	"${SET}"\
+        "${RUNS}"\
+        "${TEMPLATE}"\
+        "${ELEMENTS}"\
+        "${INIT}"\
+        "${POTENTIAL}"\
+        "${STYLE}"\
+        "${TIMESTEP}"\
+        "${DUMP}"\
+        "${HOLDTYPE}"\
+        "${VOLS}"\
+        "${HOLDS}"\
+
+# Run all created jobs
+${PYTHON} ${SCRIPTS_DIR}run_lammps.py\
+        "${SET}"\
+        "${MPI} -n ${THREADS} ${LAMMPS}"\
+        "${IN_NAME}"\
+
+${PYTHON} ${SCRIPTS_DIR}thermo_plotter.py\
+	"${SET}"\
+	"${IN_NAME}"\
+	"${SIGMA}"\
+	"True"\
