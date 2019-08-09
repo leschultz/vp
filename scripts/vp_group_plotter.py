@@ -58,15 +58,6 @@ for group, data in groups:
     fig, ax = pl.subplots()
 
     groupstr = str(group)
-    ax.errorbar(
-                data['atoms'],
-                data['fraction_mean'],
-                data['fraction_std'],
-                marker='.',
-                linestyle='none',
-                ecolor='r',
-                label='STDEV: '+groupstr
-                )
 
     ax.errorbar(
                 data['atoms'],
@@ -74,7 +65,7 @@ for group, data in groups:
                 data['fraction_sem'],
                 marker='.',
                 linestyle='none',
-                ecolor='y',
+                ecolor='r',
                 label='SEM: '+groupstr
                 )
 
