@@ -1,0 +1,103 @@
+# Written by Lane Enrique Schultz
+
+# This input file can be used to hold at a beginning temperature, then
+# ascend or descend into a final tempeerature for a number of steps, then
+# hold at a final temperature.
+
+# Specifics regarding definable parameters are covered by the READMEs
+
+###############################################################################
+
+# Starting parameters
+units                                       metal
+atom_style                                  atomic
+dimension                                   3
+boundary                                    p p p
+
+###############################################################################
+
+# Material
+variable                                    potential                 string ../../../../potentials/AlSmCu.lammps.eam
+variable                                    potential_type            string eam/alloy
+
+# Time variables
+variable                                    mytimestep                equal  0.001
+
+# Random seed
+variable                                    seed                      equal  793755
+
+# Data output
+variable                                    mydumprate                equal  100
+variable                                    data_file_characteristics string system.txt
+variable                                    data_file_dump_rate       string traj.lammpstrj
+variable                                    data_positions_final      string final.dat
+variable                                    data_restart              string restart.rest
+
+################################################################################
+
+# Simulation space
+read_data                                   ../../../../initial_trajectories/1848-160-40.lammpstrj
+
+################################################################################
+
+# Data
+pair_style                                  ${potential_type}
+pair_coeff                                  * * ${potential} Al Sm Cu
+
+################################################################################
+
+# Computed values by LAMMPS
+compute                                     Temperature  all   temp
+compute                                     Pressure     all   pressure thermo_temp
+compute                                     PE           all   pe
+compute                                     KE           all   ke
+
+# Computed variables
+variable                                    Volume       equal vol
+
+################################################################################
+
+# Time step
+timestep                                    ${mytimestep}
+
+################################################################################
+
+# Save atom positions at an interval
+dump                  my_dump_rate all custom &
+		      ${mydumprate} ${data_file_dump_rate} &
+                      id type xu yu zu
+
+dump_modify           my_dump_rate sort id
+
+################################################################################
+
+# Open save data
+fix                   data_saving all ave/time 1 1 &
+                      ${mydumprate} c_Temperature c_Pressure v_Volume c_PE c_KE &
+                      file ${data_file_characteristics}
+
+# Start of run
+velocity all create 1300 ${seed} rot yes dist gaussian
+
+change_box all x final 0.0 34.58419227872973 y final 0.0 34.58419227872973 z final 0.0 34.58419227872973 units box
+fix step all nvt temp 1300 1300 0.1
+run 15000
+unfix step
+change_box all x final 0.0 33.817631716690485 y final 0.0 33.817631716690485 z final 0.0 33.817631716690485 units box
+fix step all nvt temp 800 800 0.1
+run 15000
+unfix step
+change_box all x final 0.0 33.314713675635936 y final 0.0 33.314713675635936 z final 0.0 33.314713675635936 units box
+fix step all nvt temp 300 300 0.1
+run 15000
+unfix step
+
+
+# Close save data
+unfix                data_saving
+
+################################################################################
+
+# Data for final position and properties
+write_data                                  ${data_positions_final}
+write_restart                               ${data_restart}
